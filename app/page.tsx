@@ -27,14 +27,13 @@ export default function Home() {
               <span className="highlight">Any</span> language for&nbsp;
               <span className="highlight">Free</span>
             </p>
+            <p className="">
+              Simply message in <span className="highlight">Any</span> language,
+              we will take care of the translation for you
+            </p>
           </div>
-          <p className="text-xs text-gray-500 mt-1 mb-10">
-            Supports&nbsp;
-            {Object.values(supportedLanguage)
-              .map(({ name }) => name)
-              .join(', ')}
-          </p>
-          <div className="w-fit mx-auto">
+
+          <div className="w-fit mx-auto mt-10">
             <Link href={'/chat'}>
               <Button className="border-purple-500" variant="outline">
                 Get Started

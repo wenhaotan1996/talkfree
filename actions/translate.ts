@@ -1,37 +1,26 @@
 'use server';
 
-import { supportedLanguage } from '../lib/languages';
-import type { LanguageKey } from '../lib/languages';
+import { LanguageKey } from '@/lib/languages';
+import { generateTranslationURL } from './utils';
+import type { TranslationAPIResponse } from '@/lib/types';
 import admin from 'firebase-admin';
-
-type Translation = {
-  translatedText: string;
-  detectedSourceLanguage: string;
-};
-
-type TranslationAPIResponse = {
-  data: {
-    translations: Translation[];
-  };
-};
-
-function generateTranslationURL(text: string, targetLanguage: string) {
-  return `https://translation.googleapis.com/language/translate/v2?key=${process.env.GOOGLE_KEY}&q=${text}&target=${targetLanguage}`;
-}
 
 export async function translateMsg(
   chatId: string,
   messageId: string,
   text: string
 ) {
-  const messageRef = admin
-    .firestore()
+  const firestore = admin.firestore();
+  const chatRef = firestore.collection('chats').doc(chatId);
+  const chat = (await chatRef.get()).data();
+  const languages: LanguageKey[] = chat?.languages ?? [];
+  const messageRef = firestore
     .collection('chats')
     .doc(chatId)
     .collection('messages')
     .doc(messageId);
 
-  const translationPromises = Object.keys(supportedLanguage).map((language) =>
+  const translationPromises = languages.map((language) =>
     fetch(generateTranslationURL(text, language)).then((res) => res.json())
   );
 
@@ -41,8 +30,9 @@ export async function translateMsg(
   const translatedWithLabel: {
     [key in LanguageKey]?: string;
   } = {};
-  Object.keys(supportedLanguage).forEach((language, i) => {
-    translatedWithLabel[language as LanguageKey] = translated[i];
+
+  languages.forEach((language, i) => {
+    translatedWithLabel[language] = translated[i];
   });
 
   messageRef.update({

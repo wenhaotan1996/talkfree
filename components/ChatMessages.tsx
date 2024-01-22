@@ -11,6 +11,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { cn } from '@/lib/utils';
 import UserAvartar from './UserAvartar';
 import { Loader2Icon, MessageCircleIcon } from 'lucide-react';
+import { addLanguage } from '@/actions/addLanguage';
 
 type Props = {
   chatId: string;
@@ -28,6 +29,10 @@ export default function ChatMessages({ chatId, initialMessage }: Props) {
       initialValue: initialMessage,
     }
   );
+
+  useEffect(() => {
+    addLanguage(chatId, language);
+  }, [language]);
 
   function scrollToBottom(delay?: number) {
     setTimeout(() => {
@@ -88,7 +93,7 @@ export default function ChatMessages({ chatId, initialMessage }: Props) {
                   {translation && translation[language]
                     ? translation[language]
                     : input}
-                  {!translation && (
+                  {!(translation && translation[language]) && (
                     <span>
                       <Loader2Icon className="animate-spin inline-block ml-1" />
                     </span>

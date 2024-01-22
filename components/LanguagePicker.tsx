@@ -24,7 +24,7 @@ export default function LanguagePicker({}: Props) {
         <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent>
-        {Object.values(supportedLanguage).map(({ language, name }) => (
+        {supportedLanguage.map(({ language, name }) => (
           <SelectItem value={language} key={language}>
             {name}
           </SelectItem>

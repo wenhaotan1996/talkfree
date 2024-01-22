@@ -25,6 +25,9 @@ export default function ChatRow({ chatId }: Props) {
     chatLastMessageRef(chatId)
   );
   const lastMessage = messages && messages.length > 0 ? messages[0] : null;
+  const messageText = lastMessage?.translation
+    ? lastMessage?.translation[language] ?? lastMessage?.input
+    : 'Try sending message now...';
 
   return (
     <div
@@ -52,9 +55,7 @@ export default function ChatRow({ chatId }: Props) {
               {lastMessage?.user.name ?? 'New Chat'}
             </p>
             <p className="line-clamp-1 text-sm font-sans text-gray-500">
-              {lastMessage?.translation
-                ? lastMessage.translation[language]
-                : 'Try sending message now...'}
+              {messageText}
             </p>
           </div>
           <div className="text-xs text-right space-y-2 text-gray-500">
